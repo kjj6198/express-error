@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-css-modules"
+  ],
+  "rules": {
+    "at-rule-no-unknown": null,
+    "declaration-empty-line-before": null,
+    "indentation": 2,
+    "declaration-block-trailing-semicolon": null,
+    "no-eol-whitespace": null,
+    "block-closing-brace-empty-line-before": null,
+    "no-missing-end-of-source-newline": null
+  }
+}
