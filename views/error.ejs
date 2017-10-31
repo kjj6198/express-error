@@ -19,7 +19,7 @@
     * { box-sizing: border-box; }
 
     header {
-      background: darkblue;
+      background: #020460;
       padding: 15px;
       color: #fff;
       font-family: Helvetica, sans-serif;
@@ -40,6 +40,9 @@
       margin: 0;
     }
 
+    .highlight {
+      background: rgba(254, 101, 101, .2)
+    }
     header h5 > span {
       color: #fff;
       font-weight: normal;
@@ -60,6 +63,7 @@
       padding: 10px;
       border: 1px solid #ddd;
       background: #fff;
+      border-radius: 4px;
     }
     
     .stack span {
@@ -81,17 +85,28 @@
     .path {
       font-size: .8em;
     }
+
+    .message {
+      font-size: 20px;
+    }
+
+    .linenumber {
+      color: #880000!important;
+    }
+
+    .linenumber > span { color: #880000!important }
   </style>
 </head>
 <body>
   <header>
     <h5><%= error %> <span>at <%= filename %> line <%= line %></span></h5>
-    <p><%= message %></p>
+    <p class="message"><%= message %></p>
   </header>
   <div class="wrapper">
     <div class="stacks-frame">
+      <h4>Call Stack</h4>
       <% stacks.forEach(function(stack, i) { %>
-      <div class="stack">
+      <div class="stack" data-path="<%= stack.match(/\((.+)\)/) && stack.match(/\((.+)\)/)[1] %>">
         <% var msg = stack.split(' ') %>
         <h5><%- msg[0].split('.').length > 1 ? `${msg[0].split('.')[0]}#<span>${msg[0].split('.')[1]}</span>` : msg[0] %></h5>
 
@@ -102,19 +117,38 @@
       <% }) %>
     </div>
     <div class="content">
-      <a href="file://<%= filename %>"><strong><%= filename %> at line <%= line %></strong></a>
+      <a id="linenumber" href="file://<%= filename %>"><strong><%= filename %> at line <%= line %></strong></a>
       
       <pre>
         <code class="javascript">
-          <%= content %>
+          <%- content %>
         </code>
       </pre>
     </div>
   </div>
-  
-  <%= stack %>
-  <%= filename %>
-  
-  <%= stacks %>
 </body>
+<script>
+document.querySelectorAll('.stack')
+  .forEach(elm => {
+    elm.addEventListener('click', e => {
+      const path = e.target.getAttribute('data-path');
+
+      if (path) {
+        fetch('/error', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: path })
+        })
+        .then(res => res.json())
+        .then(result => {
+          document.getElementById('linenumber').innerHTML = '<strong>' + result.filename + ' at ' + result.line + '</strong>';
+          document.querySelector('code.javascript')
+            .innerHTML = result.content;
+          return document.querySelector('code.javascript');
+        })
+        .then(hljs.highlightBlock)
+      }
+    })
+  })
+</script>
 </html>

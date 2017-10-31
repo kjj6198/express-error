@@ -5,16 +5,10 @@
     "start": "node ./server/app.js"
   },
   "dependencies": {
+    "body-parser": "^1.18.2",
     "ejs": "^2.5.7",
     "express": "^4.16.2",
-    "nthline": "^1.0.1",
-    "prop-types": "^15.5.10",
-    "ramda": "^0.24.1",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "react-redux": "^5.0.6",
-    "redux": "^3.7.2",
-    "redux-logger": "^3.0.6"
+    "ramda": "^0.24.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.1",
