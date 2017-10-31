@@ -1,36 +1,23 @@
-### Webpack setting
+# Express Beautiful Error print
+print stack trace and beautify message.
+**WARN: it's not stable.**
 
-#### 如何開啟 devServer
+## Why
 
-- run `npm run webpack-dev-server`
-詳細設定可以到 `webpack.config.js` 查看
-- 到 `localhost:8080` 進行開發，publicPath 為 `/bundle`
+There's no middleware do logging when exception occurs. So we always print out all stack trace on error page.
+It's little bit difficult to debug or inspect sometimes.
 
-#### Webpack build
+## How to use
 
-- 到 `webpack.parts.js` 查看相關設定
+use it as normal express middleware.
 
-#### 使用的 module
+```javascript
+const app = require('express')();
+const errorBeautify = require('express-error');
+app.use(errorBeautify());
+```
 
-- babel
-  - es2015
-  - react
-  - react-hmr
-  - 相關設定在 babelrc
-- postcss
-  - autoprefixer
-  - cssnano
-  - 相關設定在 postcssrc
-- eslint
-- stylelint
-- react
-  - react-dom
-  - react-redux
-  - redux
-  - redux-logger
-- ramda
+<img width="1678" alt="2017-10-31 1 47 38" src="https://user-images.githubusercontent.com/6581081/32209231-3dc9cd18-bdd5-11e7-8e55-86676e1a3bcd.png">
 
-
-## License
-
+## LICENSE
 MIT
