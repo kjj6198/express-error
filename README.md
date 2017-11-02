@@ -29,9 +29,9 @@ app.get('/', function(req, res) {
 
 ## TODO
 
-[] move function to middleware.
-[] customize error page.
-[] make interactive REPL more realistic.
+- [ ] move function to middleware.
+- [ ] customize error page.
+- [ ] make interactive REPL more realistic.
 
 
 <img width="1678" alt="2017-10-31 1 47 38" src="https://user-images.githubusercontent.com/6581081/32209231-3dc9cd18-bdd5-11e7-8e55-86676e1a3bcd.png">
