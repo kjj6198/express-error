@@ -124,6 +124,24 @@
           <%- content %>
         </code>
       </pre>
+      <input id="REPL" />
+      <code id="result">
+
+      </code>
+      <table>
+        <tr>
+          <td>params</td>
+          <td><%= params %></td>
+        </tr>
+        <tr>
+            <td>headers</td>
+            <td><%= headers %></td>
+          </tr>
+        <tr>
+          <td>request</td>
+          <td><%= request %></td>
+        </tr>
+      </table>
     </div>
   </div>
 </body>
@@ -149,6 +167,25 @@ document.querySelectorAll('.stack')
         .then(hljs.highlightBlock)
       }
     })
+  })
+
+document
+  .getElementById('REPL')
+  .addEventListener('keydown', e => {
+    if (e.keyCode === 13) {
+      fetch('/error/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ script: e.target.value }),
+      })
+      .then(res => res.status === 400 ? Promise.reject(res.json()) : Promise.resolve(res.json()))
+      .then(({ result }) => {
+        if (result) {
+          document.getElementById('result').innerHTML = `<pre>${result}</pre>`;
+        }        
+      })
+      .catch(res => res.then(({ error }) => document.getElementById('result').innerHTML = `<pre class="error">${error}</pre>`))
+    }
   })
 </script>
 </html>

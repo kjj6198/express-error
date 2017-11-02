@@ -3,6 +3,8 @@ const app = express();
 const path = require('path');
 const fs = require('fs');
 const bodyParser = require('body-parser');
+const util = require('util');
+const vm = require('vm');
 
 app.set('view engine', 'ejs');
 app.set('views', path.resolve(__dirname, '../views'));
@@ -74,6 +76,9 @@ app.use((err, req, res, next) => {
     filename,
     line,
     row,
+    headers: util.format(req.headers),
+    request: util.format(req),
+    params: JSON.stringify(req.params),
     content: fileContent
       .toString()
       .split('\n')
@@ -83,9 +88,38 @@ app.use((err, req, res, next) => {
     stacks: stacks.map(msg => msg.replace('at', '').trim())
   });
 
-  app.post('/error', (errReq, errRes) => {
-    errRes.json(analzeStack(errReq.body.path));
+
+  
+});
+
+app.post('/error/run', (runReq, runRes) => {
+  const { script } = runReq.body;
+  console.log(runReq.body)
+  const debugContext = vm.createContext({
+    request: runReq,
+    response: runRes,
+    util: require('util'),
+    Buffer: require('buffer').Buffer,
+    stream: require('stream'),
+    fs: require('fs'),
+    console: new console.Console(runRes)
   });
+
+    try {
+      const result = vm.runInContext(script, debugContext);
+      return runRes.json({ result });
+    } catch (error) {
+      return runRes.status(400).json({ error: error.message + error.stack })
+    }
+    
+  
+    
+    // runRes.json({ err: e });
+  
+
+});
+app.post('/error', (errReq, errRes) => {
+  errRes.json(analzeStack(errReq.body.path));
 });
 
 app.listen(3000);
