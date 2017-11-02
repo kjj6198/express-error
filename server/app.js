@@ -5,7 +5,6 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const util = require('util');
 const vm = require('vm');
-const stream = require('stream');
 
 app.set('view engine', 'ejs');
 app.set('views', path.resolve(__dirname, '../views'));
@@ -48,10 +47,6 @@ function analzeStack(filepath) {
   }
   return null;
 }
-
-app.get('/', (res, req) => {
-  res.renders('h');
-})
 
 app.use((err, req, res, next) => {
   // console.log(req);
