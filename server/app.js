@@ -91,30 +91,25 @@ app.use((err, req, res, next) => {
 
 app.post('/error/run', (runReq, runRes) => {
   const { script } = runReq.body;
-  console.log(runReq.body)
+
   const debugContext = vm.createContext({
     request: runReq,
     response: runRes,
     util: require('util'),
     Buffer: require('buffer').Buffer,
     stream: require('stream'),
-    fs: require('fs'),
     console: {
       log: util.format
     },
-    clear: '',
+    clear: ''
   });
 
-    try {
-      const result = vm.runInContext(script, debugContext);
-      return runRes.json({ result });
-    } catch (error) {
-      return runRes.status(400).json({ error: error.message + error.stack });
-    }
-    
-    // runRes.json({ err: e });
-  
-
+  try {
+    const result = vm.runInContext(script, debugContext);
+    return runRes.json({ result });
+  } catch (error) {
+    return runRes.status(400).json({ error: error.stack });
+  }
 });
 
 app.post('/error', (errReq, errRes) => {

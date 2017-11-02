@@ -34,7 +34,7 @@ app.get('/', function(req, res) {
 - [ ] make interactive REPL more realistic.
 
 
-<img width="1678" alt="2017-10-31 1 47 38" src="https://user-images.githubusercontent.com/6581081/32209231-3dc9cd18-bdd5-11e7-8e55-86676e1a3bcd.png">
+![2017-11-02 5 59 27](https://user-images.githubusercontent.com/6581081/32320107-ba679d58-bf8a-11e7-9117-9296af4933ea.png)
 
 ## LICENSE
 MIT
