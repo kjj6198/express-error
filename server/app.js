@@ -5,6 +5,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const util = require('util');
 const vm = require('vm');
+const stream = require('stream');
 
 app.set('view engine', 'ejs');
 app.set('views', path.resolve(__dirname, '../views'));
@@ -14,9 +15,8 @@ app.use(bodyParser.json());
 
 
 app.get('/', (req, res) => {
-  throw new RangeError('range out of bound. Please check http://kjj6198.github.io for more information.')
-})
-
+  throw new TypeError('range out of bound. Please check http://kjj6198.github.io for more information.')
+});
 
 const padding = (time) => {
   let str = '';
@@ -49,6 +49,10 @@ function analzeStack(filepath) {
   return null;
 }
 
+app.get('/', (res, req) => {
+  res.renders('h');
+})
+
 app.use((err, req, res, next) => {
   // console.log(req);
   const [filename, line, row] = err.stack.split('\n')[1].match(/\((.+)\)/)[1].split(':');
@@ -76,7 +80,7 @@ app.use((err, req, res, next) => {
     filename,
     line,
     row,
-    headers: util.format(req.headers),
+    headers: req.headers,
     request: util.format(req),
     params: JSON.stringify(req.params),
     content: fileContent
@@ -88,8 +92,6 @@ app.use((err, req, res, next) => {
     stacks: stacks.map(msg => msg.replace('at', '').trim())
   });
 
-
-  
 });
 
 app.post('/error/run', (runReq, runRes) => {
@@ -102,22 +104,24 @@ app.post('/error/run', (runReq, runRes) => {
     Buffer: require('buffer').Buffer,
     stream: require('stream'),
     fs: require('fs'),
-    console: new console.Console(runRes)
+    console: {
+      log: util.format
+    },
+    clear: '',
   });
 
     try {
       const result = vm.runInContext(script, debugContext);
       return runRes.json({ result });
     } catch (error) {
-      return runRes.status(400).json({ error: error.message + error.stack })
+      return runRes.status(400).json({ error: error.message + error.stack });
     }
-    
-  
     
     // runRes.json({ err: e });
   
 
 });
+
 app.post('/error', (errReq, errRes) => {
   errRes.json(analzeStack(errReq.body.path));
 });
